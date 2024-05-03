@@ -1,36 +1,24 @@
 import Post from './Post'
 import classes from './PostList.module.css'
-import NewPost from './NewPost'
 import { useState } from 'react';
-import Modal from './Modal';
+import Modal from './Modal.jsx'
+import NewPost from './NewPost'
 
-function PostList() {
+function PostList({ onModalClose, ModalVisibility}) {
 
-    const [BodyNewContent, setBodyNewContent] = useState('');
-    function changeBodyContenthandler(event) {
-        setBodyNewContent(event.target.value);
-    };
-    const [AuthorNewContent, setNewAuthorContent] = useState('');
-
-    function ChangeAuthorContenthandler(event) {
-        setNewAuthorContent(event.target.value);
-    };
-
-    const [ModalVisibility, setModalVisibility] = useState(true);
-    function ModalVisibilityHandler() {
-        setModalVisibility(false);
+    const [posts, setNewPost] =useState([]);
+    function addNewPostHander(PostData){
+        setNewPost((existingPosts) => [PostData, ...existingPosts]);
     }
-    let Modalcontent = (<Modal onClose={ModalVisibilityHandler}>
-        <NewPost onBodyChange={changeBodyContenthandler}
-            onAuthorChange={ChangeAuthorContenthandler} />
-    </Modal>);
 
+    let Modalcontent = (<Modal onClose={onModalClose}>
+        <NewPost onClose={onModalClose} addNewPost={addNewPostHander} />
+         </Modal>);
     return (
         <>
-            {ModalVisibility ? Modalcontent : null  }
+            {ModalVisibility ? Modalcontent : null}
             <ul className={classes.posts}>
-                <Post author={AuthorNewContent} body={BodyNewContent} />
-                <Post author='author2' body='this is a demo body' />
+                {posts.map((post)=> <Post author={post.author} body={post.body} key={post.body}/>)}
             </ul>
         </>
     )
